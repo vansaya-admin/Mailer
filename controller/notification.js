@@ -4,12 +4,13 @@ import dayjs from "dayjs";
 
 export const sendNotification = async (req, res) => {
     try {
-        const tomorrow = dayjs().add(1, 'day').startOf('day').toDate();
-        const dayAfterTomorrow = dayjs().add(2, 'day').startOf('day').toDate();
+        const today = dayjs().startOf('day'); // Start of today
+        const startOfTomorrow = today.add(1, 'day').startOf('day').toDate();
+        const endOfTomorrow = today.add(1, 'day').endOf('day').toDate();
 
         const notifications = await Notification.find({
             status: "UNSENT",
-            date: { $gte: tomorrow, $lt: dayAfterTomorrow }
+            date: { $gte: startOfTomorrow, $lte: endOfTomorrow }
         });
         console.log(`Found ${notifications.length} notifications to send`);
         await Promise.all(notifications.map(async (notification) => {
