@@ -44,23 +44,4 @@ export const adminSchema = new mongoose.Schema({
     timestamps: true
 });
 
-adminSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) {
-        next();
-    }
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-});
-
-adminSchema.methods.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
-};
-
-adminSchema.methods.generateToken = async function () {
-    return jwt.sign({id: this._id}, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRY
-    });
-};
-
 export const Admin = mongoose.model("Admin", adminSchema);

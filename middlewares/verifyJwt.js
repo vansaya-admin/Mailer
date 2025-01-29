@@ -8,7 +8,7 @@ export const verifyJwt = async (req, res, next) => {
             return res.status(401).json({message: "Unauthorized"});
         }
 
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const admin = await Admin.findById(decoded.id);
         if (!admin) {
             return res.status(401).json({message: "Unauthorized to access this route"});
